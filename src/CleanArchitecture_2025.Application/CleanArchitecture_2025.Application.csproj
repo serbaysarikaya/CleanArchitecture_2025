@@ -18,4 +18,4 @@
 	  <ProjectReference Include="..\CleanArchitecture_2025.Domain\CleanArchitecture_2025.Domain.csproj" />
 	</ItemGroup>
 
-</Project>
+	</Project>

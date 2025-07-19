@@ -10,10 +10,9 @@ namespace CleanArchitecture_2025.Application.Employees
     {
         public string FirstName { get; set; } = default!;
         public string LastName { get; set; } = default!;
-        public string TCNo { get; set; } = default!;
         public DateOnly BirthOfDate { get; set; }
         public decimal Salary { get; set; }
-        public Addrees? Address { get; set; }
+        public string TCNo { get; set; } = default!;
     }
 
     internal sealed class EmployeeGetAllIQueryHandler(IEmployeeRepository employeeRepository) : IRequestHandler<EmployeeGetAllQuery,
@@ -25,10 +24,9 @@ namespace CleanArchitecture_2025.Application.Employees
             {
                 FirstName = x.FirstName,
                 LastName = x.LastName,
-                TCNo = x.PersonalInformation.TCNo,
+                TCNo = x.PersonelInformation.TCNo,
                 BirthOfDate = x.BirthOfDate,
                 Salary = x.Salary,
-                Address = x.Address,
                 CreateAt = x.CreateAt,
                 UpdateAt = x.UpdateAt,
                 IsDeleted = x.IsDeleted,

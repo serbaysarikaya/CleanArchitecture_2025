@@ -36,7 +36,7 @@ internal sealed class EmployeeCreateHandler(
 {
     public async Task<Result<string>> Handle(EmployeeCreateCommand request, CancellationToken cancellationToken)
     {
-        var isEmloyeeExists = await employeeRepository.AnyAsync(x => x.PersonalInformation.TCNo == request.PersonelInformation.TCNo, cancellationToken);
+        var isEmloyeeExists = await employeeRepository.AnyAsync(x => x.PersonelInformation.TCNo == request.PersonelInformation.TCNo, cancellationToken);
 
         if (isEmloyeeExists)
         {

@@ -9,6 +9,6 @@ public sealed class Employee : Entity
     public string FullName => $"{FirstName} {LastName}";
     public DateOnly BirthOfDate { get; set; }
     public decimal Salary { get; set; }
-    public PersonelInformation PersonalInformation { get; set; } = default!;
+    public PersonelInformation PersonelInformation { get; set; } = default!;
     public Addrees? Address { get; set; }
 }
