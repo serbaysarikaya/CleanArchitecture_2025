@@ -4,7 +4,7 @@
     {
         public Entity()
         {
-            Id = Guid.NewGuid();
+            Id = Guid.CreateVersion7();
         }
         public Guid Id { get; set; }
 
