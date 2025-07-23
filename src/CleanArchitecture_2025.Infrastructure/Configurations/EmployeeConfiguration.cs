@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace CleanArchitecture_2025.Infrastructure.Configuration
+namespace CleanArchitecture_2025.Infrastructure.Configurations
 {
     internal sealed class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
     {

@@ -39,6 +39,9 @@ public class Program
 
         builder.Services.AddExceptionHandler<ExceptionHandler>().AddProblemDetails();
 
+        builder.Services.AddAuthentication().AddBearerToken();
+        builder.Services.AddAuthorization();
+
         var app = builder.Build();
 
         app.MapOpenApi();
@@ -52,9 +55,15 @@ public class Program
 
         app.RegisterRoutes();
 
+        app.UseAuthentication();
+
+        app.UseAuthorization();
+
         app.UseExceptionHandler();
 
-        app.MapControllers().RequireRateLimiting("fixed");
+        app.MapControllers().RequireRateLimiting("fixed").RequireAuthorization(); ;
+
+        ExtensionsMiddleware.CreateFirstUser(app);
 
         app.Run();
     }

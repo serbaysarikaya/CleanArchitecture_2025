@@ -1,6 +1,8 @@
 ﻿using CleanArchitecture_2025.Domain.Abstraction;
 using CleanArchitecture_2025.Domain.Employees;
+using CleanArchitecture_2025.Domain.Users;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 
 namespace CleanArchitecture_2025.Application.Employees
 {
@@ -15,25 +17,34 @@ namespace CleanArchitecture_2025.Application.Employees
         public string TCNo { get; set; } = default!;
     }
 
-    internal sealed class EmployeeGetAllIQueryHandler(IEmployeeRepository employeeRepository) : IRequestHandler<EmployeeGetAllQuery,
+    internal sealed class EmployeeGetAllIQueryHandler(
+        IEmployeeRepository employeeRepository,
+        UserManager<AppUser> userManager) : IRequestHandler<EmployeeGetAllQuery,
         IQueryable<EmployeeGetAllQueryResponse>>
     {
         public Task<IQueryable<EmployeeGetAllQueryResponse>> Handle(EmployeeGetAllQuery request, CancellationToken cancellationToken)
         {
-            var response = employeeRepository.GetAll().Select(x => new EmployeeGetAllQueryResponse
-            {
-                FirstName = x.FirstName,
-                LastName = x.LastName,
-                TCNo = x.PersonelInformation.TCNo,
-                BirthOfDate = x.BirthOfDate,
-                Salary = x.Salary,
-                CreateAt = x.CreateAt,
-                UpdateAt = x.UpdateAt,
-                IsDeleted = x.IsDeleted,
-                DeleteAt = x.DeleteAt,
-                Id = x.Id
-            })
-            .AsQueryable();
+            var response = (from employee in employeeRepository.GetAll()
+                            join create_user in userManager.Users.AsQueryable() on employee.CreateUserId equals create_user.Id
+                            join update_user in userManager.Users.AsQueryable() on employee.CreateUserId equals update_user.Id into update_user
+                            from update_users in update_user.DefaultIfEmpty()
+                            select new EmployeeGetAllQueryResponse
+                            {
+                                FirstName = employee.FirstName,
+                                LastName = employee.LastName,
+                                BirthOfDate = employee.BirthOfDate,
+                                Salary = employee.Salary,
+                                CreateAt = employee.CreateAt,
+                                UpdateAt = employee.UpdateAt,
+                                DeleteAt = employee.DeleteAt,
+                                Id = employee.Id,
+                                IsDeleted = employee.IsDeleted,
+                                TCNo = employee.PersonelInformation.TCNo,
+                                CreateUserId = employee.CreateUserId,
+                                CreateUserName = create_user.FirstName + " " + create_user.LastName + " (" + create_user.Email + ") ",
+                                UpdateUserId = employee.UpdateUserId,
+                                UpdateUserName = employee.UpdateUserId == null ? null : update_users.FirstName + " " + update_users.LastName + " (" + update_users.Email + ") "
+                            }).AsQueryable();
             return Task.FromResult(response);
         }
     }
