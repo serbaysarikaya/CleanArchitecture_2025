@@ -1,6 +1,8 @@
-﻿using CleanArchitecture_2025.Domain.Users;
+﻿using CleanArchitecture_2025.Application.Services;
+using CleanArchitecture_2025.Domain.Users;
 using CleanArchitecture_2025.Infrastructure.Context;
 using CleanArchitecture_2025.Infrastructure.Options;
+using CleanArchitecture_2025.Infrastructure.Services;
 using GenericRepository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -40,6 +42,12 @@ namespace CleanArchitecture_2025.Infrastructure
 
             services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
             services.ConfigureOptions<JwtOptionsSetup>();
+            services.Configure<KeycloakConfiguration>(configuration.GetSection("KeycloakConfiguration"));
+            services.AddScoped<KeycloakService>();
+
+            //services.AddScoped<KeycloakService>();
+            services.AddScoped<IJwtProvider, KeycloakService>();
+
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

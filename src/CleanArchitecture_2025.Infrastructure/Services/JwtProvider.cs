@@ -9,19 +9,19 @@ using System.Text;
 
 namespace CleanArchitecture_2025.Infrastructure.Services
 {
-    public class JwtProvider (IOptions<JwtOptions> options) : IJwtProvider
+    public class JwtProvider(IOptions<JwtOptions> options) : IJwtProvider
     {
-        public Task<string> CreateTokenAsync(AppUser user, CancellationToken cancellationToken = default)
+        public Task<string> CreateTokenAsync(AppUser user, string password, CancellationToken cancellationToken = default)
         {
-
-            var expires = DateTime.UtcNow.AddDays(11);
-            SymmetricSecurityKey securityKey = new(Encoding.UTF8.GetBytes(options.Value.SecretKey));
-            SigningCredentials signingCredentials = new(securityKey, SecurityAlgorithms.HmacSha256);
-
             List<Claim> claims = new()
-            {
-                new Claim("user-id", user.Id.ToString()),
-            };
+        {
+            new Claim(ClaimTypes.NameIdentifier,user.Id.ToString())
+        };
+
+            var expires = DateTime.Now.AddDays(1);
+
+            SymmetricSecurityKey securityKey = new(Encoding.UTF8.GetBytes(options.Value.SecretKey));
+            SigningCredentials signingCredentials = new(securityKey, SecurityAlgorithms.HmacSha512);
 
             JwtSecurityToken securityToken = new(
                 issuer: options.Value.Issuer,
@@ -35,9 +35,7 @@ namespace CleanArchitecture_2025.Infrastructure.Services
 
             string token = handler.WriteToken(securityToken);
 
-
             return Task.FromResult(token);
-
         }
     }
 }

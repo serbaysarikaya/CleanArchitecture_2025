@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace CleanArchitecture_2025.Infrastructure.Context;
 
@@ -29,13 +30,20 @@ internal sealed class ApplicationDbContext : IdentityDbContext<AppUser, Identity
     }
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        var enteries = ChangeTracker.Entries<Entity>();
+        var entries = ChangeTracker.Entries<Entity>();
 
         HttpContextAccessor httpContextAccessor = new();
-        string userIdString = httpContextAccessor.HttpContext!.User.Claims.First(p=>p.Type == "user-id").Value;
+        string userIdString =
+            httpContextAccessor
+            .HttpContext!
+            .User
+            .Claims
+            .First(p => p.Type == ClaimTypes.NameIdentifier)
+            .Value;
+
         Guid userId = Guid.Parse(userIdString);
 
-        foreach (var entry in enteries)
+        foreach (var entry in entries)
         {
             if (entry.State == EntityState.Added)
             {

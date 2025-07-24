@@ -41,11 +41,15 @@ public class Program
 
         builder.Services.AddAuthentication().AddBearerToken();
         builder.Services.AddAuthorization();
+        builder.Services.AddResponseCompression();
 
         var app = builder.Build();
 
         app.MapOpenApi();
         app.MapScalarApiReference();
+
+        app.UseHttpsRedirection();
+
 
         app.UseCors(policy => policy
         .AllowCredentials()
@@ -59,6 +63,8 @@ public class Program
 
         app.UseAuthorization();
 
+        app.UseResponseCompression();
+
         app.UseExceptionHandler();
 
         app.MapControllers().RequireRateLimiting("fixed").RequireAuthorization(); ;
@@ -68,3 +74,4 @@ public class Program
         app.Run();
     }
 }
+
